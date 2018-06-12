@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  MoviesListViewController.swift
 //  MADMovie
 //
 //  Copyright © 2018 marydort. All rights reserved.
@@ -7,13 +7,24 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class MoviesListViewController: UIViewController {
 
     @IBOutlet weak var inTheatreCollectionView: UICollectionView!
     @IBOutlet weak var popularMoviesCollectionView: UICollectionView!
     @IBOutlet weak var highestRatedMoviesCollectionView: UICollectionView!
     
     private let moviewCollectionViewDelegate = MoviesCollectionViewDelegate<Movie>()
+    private let moviesViewModel: MoviesViewModel
+    
+    init(nibName: String, moviesViewModel: MoviesViewModel) {
+        self.moviesViewModel = moviesViewModel
+        
+        super.init(nibName: nibName, bundle: nil)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     //MARK: Life Cycle
     override func viewDidLoad() {
@@ -24,13 +35,9 @@ class ViewController: UIViewController {
         self.configureMoviewCollectionViewDelegate()
     }
     
-    private func loadData() {
-        let dataLoader = DataLoader()
-        let remoteListRepository = RemoteListRepository<MovieInfo>(loader: dataLoader)
-        let modelView = MoviesViewModel(listRepository: remoteListRepository)
-        
-        modelView.loadMovies()
-        modelView.didLoadMovies = { [weak self] (moviesInfo) in
+    private func loadData() {        
+        moviesViewModel.loadMovies()
+        moviesViewModel.didLoadMovies = { [weak self] (moviesInfo) in
             if let movies = moviesInfo?.results {
                 self?.render(movies: movies)
             }
@@ -55,7 +62,7 @@ class ViewController: UIViewController {
 }
 
 //MARK: Helpers
-extension ViewController {
+extension MoviesListViewController {
     private func movieCollectionViewCell(collectionView: UICollectionView, indexPath: IndexPath, movie: Movie) -> UICollectionViewCell {
         let cell: MovieCollectionViewCell = collectionView.dequeueReusableCell(indexPath: indexPath)
         
