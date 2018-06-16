@@ -7,6 +7,11 @@
 
 import Foundation
 
+struct MoviesListContent {
+    let title: String
+    let information: MovieInfo
+}
+
 struct MovieInfo: Decodable {
     let page: Int
     let results: [Movie]

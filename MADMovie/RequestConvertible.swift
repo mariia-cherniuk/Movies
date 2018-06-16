@@ -8,7 +8,6 @@
 import Foundation
 
 protocol RequestConvertible {
-
     func request() -> URLRequest
 }
 
@@ -44,10 +43,29 @@ struct PopularityRequest: RequestConvertible {
     }
 }
 
-struct InCinemaRequest: RequestConvertible {
+struct InTheatreRequest: RequestConvertible {
     func request() -> URLRequest {
         var components = self.components
-        components.queryItems?.append(URLQueryItem(name: "sort_by", value: "popularity.desc"))
+        let startDate = Date().previousMonthString()
+        let endDate = Date().stringDate()
+        
+        components.queryItems?.append(URLQueryItem(name: "primary_release_date.gte", value: startDate))
+        components.queryItems?.append(URLQueryItem(name: "primary_release_date.lte", value: endDate))
+        
+        let url = components.url!
+        
+        return URLRequest(url: url)
+    }
+}
+
+struct HighestRatedMoviesRequest: RequestConvertible {
+    func request() -> URLRequest {
+        var components = self.components
+        
+        components.queryItems?.append(URLQueryItem(name: "certification_country", value: "US"))
+        components.queryItems?.append(URLQueryItem(name: "certification", value: "R"))
+        components.queryItems?.append(URLQueryItem(name: "sort_by", value: "vote_average.desc"))
+
         let url = components.url!
         
         return URLRequest(url: url)

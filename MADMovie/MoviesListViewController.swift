@@ -9,72 +9,39 @@ import UIKit
 
 class MoviesListViewController: UIViewController {
 
-    @IBOutlet weak var inTheatreCollectionView: UICollectionView!
-    @IBOutlet weak var popularMoviesCollectionView: UICollectionView!
-    @IBOutlet weak var highestRatedMoviesCollectionView: UICollectionView!
-    
-    private let moviewCollectionViewDelegate = MoviesCollectionViewDelegate<Movie>()
+    private let movieListView: UIView & MoviesListViewProtocol = MoviesListView(frame: .zero)
     private let moviesViewModel: MoviesViewModel
     
-    init(nibName: String, moviesViewModel: MoviesViewModel) {
+    init(moviesViewModel: MoviesViewModel) {
         self.moviesViewModel = moviesViewModel
         
-        super.init(nibName: nibName, bundle: nil)
+        super.init(nibName: nil, bundle: nil)
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     //MARK: Life Cycle
+    override func loadView() {
+        self.view = movieListView
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        navigationController?.navigationBar.prefersLargeTitles = true
+        title = "N E T F L I X"
+        
         self.loadData()
-        self.configureInTheatreCollectionView()
-        self.configureMoviewCollectionViewDelegate()
     }
     
     private func loadData() {        
         moviesViewModel.loadMovies()
-        moviesViewModel.didLoadMovies = { [weak self] (moviesInfo) in
-            if let movies = moviesInfo?.results {
-                self?.render(movies: movies)
-            }
-        }
-    }
-    
-    private func configureInTheatreCollectionView() {
-        inTheatreCollectionView.delegate = moviewCollectionViewDelegate
-        inTheatreCollectionView.dataSource = moviewCollectionViewDelegate
         
-        inTheatreCollectionView.registerWithClass(MovieCollectionViewCell.self)
-    }
-    
-    private func configureMoviewCollectionViewDelegate() {
-        moviewCollectionViewDelegate.cellForItem = { collectionView, indexPath, item in
-            return self.movieCollectionViewCell(collectionView: collectionView, indexPath: indexPath, movie: item)
+        moviesViewModel.didLoadMovies = movieListView.render
+        moviesViewModel.didFail = { error in
+            print(error)//TODO
         }
-        moviewCollectionViewDelegate.sizeForItemAt = {
-            return CGSize(width: 150, height: 250)
-        }
-    }
-}
-
-//MARK: Helpers
-extension MoviesListViewController {
-    private func movieCollectionViewCell(collectionView: UICollectionView, indexPath: IndexPath, movie: Movie) -> UICollectionViewCell {
-        let cell: MovieCollectionViewCell = collectionView.dequeueReusableCell(indexPath: indexPath)
-        
-        if let posterPath = movie.posterPath {
-            cell.posterImageView.downloadImageFrom(path: posterPath)
-        }
-        
-        return cell
-    }
-
-    private func render(movies: [Movie]) {
-        moviewCollectionViewDelegate.update(items: movies)
-        inTheatreCollectionView.reloadData()
     }
 }

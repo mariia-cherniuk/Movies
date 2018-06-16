@@ -15,6 +15,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
+        self.configureNavigationBarAppearace()
+        
         let rootViewController = UINavigationController()
         
         window = UIWindow(frame: UIScreen.main.bounds)
@@ -24,5 +26,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.makeKeyAndVisible()
         
         return true
+    }
+    
+    private func configureNavigationBarAppearace() {
+        let navigationBarAppearace = UINavigationBar.appearance()
+
+        navigationBarAppearace.barStyle = .black
+        navigationBarAppearace.tintColor = UIColor.red
+        navigationBarAppearace.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.red, NSAttributedStringKey.font: UIFont(name: "AmericanTypewriter-Bold", size: 25)!]
+        navigationBarAppearace.largeTitleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.red, NSAttributedStringKey.font: UIFont(name: "AmericanTypewriter-Bold", size: 30)!]
     }
 }

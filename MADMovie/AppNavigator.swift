@@ -45,7 +45,7 @@ extension AppNavigator {
     private func moviesListViewController() -> UIViewController {
         let remoteListRepository = RemoteListRepository<MovieInfo>(loader: dataLoader)
         let viewModel = MoviesViewModel(listRepository: remoteListRepository)
-        let viewController = MoviesListViewController(nibName: "MoviesListView", moviesViewModel: viewModel)
+        let viewController = MoviesListViewController(moviesViewModel: viewModel)
         
         return viewController
     }

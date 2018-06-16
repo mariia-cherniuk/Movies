@@ -18,25 +18,13 @@ extension DefaultIdentifierProtocol {
     }
 }
 
-//MARK: DefaultNibProtocol
-protocol DefaultNibProtocol: class {
-    static var nibName: String { get }
-}
-
-extension DefaultNibProtocol {
-    static var nibName: String {
-        return String(describing: self)
-    }
-}
-
-extension UICollectionViewCell : DefaultIdentifierProtocol, DefaultNibProtocol {}
+extension UICollectionViewCell : DefaultIdentifierProtocol {}
 
 extension UICollectionView {
-    func registerWithClass<T: DefaultIdentifierProtocol & DefaultNibProtocol>(_: T.Type) {
+    func registerWithClass<T: DefaultIdentifierProtocol>(_: T.Type) {
         let identifier = T.identifier
-        let nib = UINib(nibName: T.nibName, bundle: nil)
 
-        self.register(nib, forCellWithReuseIdentifier: identifier)
+        self.register(T.self, forCellWithReuseIdentifier: identifier)
     }
     
     func dequeueReusableCell<T: DefaultIdentifierProtocol>(indexPath: IndexPath) -> T {

@@ -22,6 +22,19 @@ enum Result<T> {
             self = .failure(error)
         }
     }
+    
+    static func combine<T, U, V, R>(r1: Result<T>, r2: Result<U>, r3: Result<V>, selector: (T, U, V) -> R) -> Result<R> {
+        switch (r1, r2, r3) {
+        case let (.success(a), .success(b), .success(c)):
+            return Result<R>.success(selector(a, b, c))
+        case (.failure(let error), _, _):
+            return Result<R>.failure(error)
+        case (_, .failure(let error), _):
+            return Result<R>.failure(error)
+        case (_, _, .failure(let error)):
+            return Result<R>.failure(error)
+        }
+    }
 }
 
 protocol DataLoaderProtocol {
