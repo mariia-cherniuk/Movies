@@ -13,7 +13,9 @@ class MoviesStackView: UIView {
     private let mainStackView = UIStackView()
     private let titleLabel = UILabel()
     
-    private let collectionViewDelegate = MoviesCollectionViewDelegate<Movie>()
+    private let collectionViewDelegate = ArrayCollectionViewAdapter<Movie>()
+    
+    var didSelectItem: ((Movie) -> ())?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -46,6 +48,9 @@ extension MoviesStackView {
         }
         collectionViewDelegate.sizeForItemAt = {
             return CGSize(width: 130, height: 220)
+        }
+        collectionViewDelegate.didSelectItem = { item in
+            self.didSelectItem?(item)
         }
     }
     

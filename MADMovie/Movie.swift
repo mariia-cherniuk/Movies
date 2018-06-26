@@ -5,7 +5,7 @@
 //  Copyright © 2018 marydort. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 struct MoviesListContent {
     let title: String
@@ -18,11 +18,21 @@ struct MovieInfo: Decodable {
 }
 
 struct Movie: Decodable {
+    let id: Int
     let genreIds: [Int]
     let overview: String
     let releaseDate: String
     let posterPath: String?
-    let popularity: Double
+    let backdropPath: String?
+    let popularity: Double?
     let title: String
     let voteAverage: Double
+}
+
+struct MovieImage: Decodable {
+    let backdrops: [MovieBackdrop]
+}
+
+struct MovieBackdrop: Decodable {
+    let filePath: String
 }

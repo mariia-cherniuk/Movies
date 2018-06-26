@@ -9,6 +9,7 @@ import UIKit
 
 protocol MoviesListViewProtocol {
     func render(results: [MoviesListContent])
+    func startLoading(loading: Bool)
 }
 
 class MoviesListView: UIView {
@@ -18,6 +19,9 @@ class MoviesListView: UIView {
     private let inTheatreStackView = MoviesStackView()
     private let popularMoviesStackView = MoviesStackView()
     private let highestRatedMoviesStackView = MoviesStackView()
+    private let activityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+    
+    var didSelectItem: ((Movie) -> ())?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -33,9 +37,12 @@ class MoviesListView: UIView {
 //MARK: Configure UI
 extension MoviesListView {
     private func configureSubviesw() {
+        self.backgroundColor = UIColor.black
+        
         self.configureScrollView()
         self.configureMoviesStackViews()
         self.configureMainStackView()
+        self.configureActivityIndicatorView()
     }
     
     private func configureScrollView() {
@@ -52,6 +59,16 @@ extension MoviesListView {
     
     private func configureMoviesStackViews() {
         inTheatreStackView.heightAnchor.constraint(equalToConstant: 260).isActive = true
+        
+        inTheatreStackView.didSelectItem = { item in
+            self.didSelectItem?(item)
+        }
+        popularMoviesStackView.didSelectItem = { item in
+            self.didSelectItem?(item)
+        }
+        highestRatedMoviesStackView.didSelectItem = { item in
+            self.didSelectItem?(item)
+        }
     }
     
     private func configureMainStackView() {
@@ -72,6 +89,15 @@ extension MoviesListView {
         mainStackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor).isActive = true
         mainStackView.widthAnchor.constraint(equalTo: scrollView.widthAnchor).isActive = true
     }
+    
+    private func configureActivityIndicatorView() {
+        activityIndicatorView.translatesAutoresizingMaskIntoConstraints = false
+        
+        self.addSubview(activityIndicatorView)
+        
+        activityIndicatorView.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
+        activityIndicatorView.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
+    }
 }
 
 //MARK: MoviesListViewProtocol
@@ -80,5 +106,13 @@ extension MoviesListView: MoviesListViewProtocol {
         inTheatreStackView.update(content: results[0])
         popularMoviesStackView.update(content: results[1])
         highestRatedMoviesStackView.update(content: results[2])
+    }
+    
+    func startLoading(loading: Bool) {
+        if loading {
+            activityIndicatorView.startAnimating()
+        } else {
+            activityIndicatorView.stopAnimating()
+        }
     }
 }

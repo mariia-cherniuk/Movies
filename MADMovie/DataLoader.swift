@@ -35,6 +35,17 @@ enum Result<T> {
             return Result<R>.failure(error)
         }
     }
+    
+    static func combine<T, U, V>(r1: Result<T>, r2: Result<U>, selector: (T, U) -> V) -> Result<V> {
+        switch (r1, r2) {
+        case let (.success(a), .success(b)):
+            return Result<V>.success(selector(a, b))
+        case (.failure(let error), _):
+            return Result<V>.failure(error)
+        case (_, .failure(let error)):
+            return Result<V>.failure(error)
+        }
+    }
 }
 
 protocol DataLoaderProtocol {
@@ -42,8 +53,14 @@ protocol DataLoaderProtocol {
 }
 
 class DataLoader : DataLoaderProtocol {
+    private let urlSession: URLSession
+    
+    init(urlSession: URLSession) {
+        self.urlSession = urlSession
+    }
+    
     func loadData(urlRequest: URLRequest, completion: @escaping (Result<Data>) -> Void) {
-        let dataTask = URLSession.shared.dataTask(with: urlRequest) { (data, response, error) in
+        let dataTask = urlSession.dataTask(with: urlRequest) { (data, response, error) in
             if let error = error {
                 completion(Result.failure(error))
             } else if let data = data {

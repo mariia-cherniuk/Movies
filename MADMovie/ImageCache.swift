@@ -8,8 +8,8 @@
 import UIKit
 
 protocol ImageCacheProtocol {
-    func add(image: UIImage, key: NSString)
-    func image(forKey key: NSString) -> UIImage?
+    func add(image: UIImage, key: String)
+    func image(forKey key: String) -> UIImage?
 }
 
 class ImageCache: ImageCacheProtocol {
@@ -18,11 +18,11 @@ class ImageCache: ImageCacheProtocol {
     private let imageCache = NSCache<NSString, UIImage>()
     
     //MARK: ImageCacheProtocol
-    func add(image: UIImage, key: NSString) {
-        imageCache.setObject(image, forKey: key)
+    func add(image: UIImage, key: String) {
+        imageCache.setObject(image, forKey: key as NSString)
     }
     
-    func image(forKey key: NSString) -> UIImage? {
-        return imageCache.object(forKey: key)
+    func image(forKey key: String) -> UIImage? {
+        return imageCache.object(forKey: key as NSString)
     }
 }

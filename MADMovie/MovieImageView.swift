@@ -12,7 +12,7 @@ class MovieImageView : UIImageView {
     func downloadImageFrom(path: String) {
         self.image = nil
         
-        if let obj = ImageCache.sharedInstance.image(forKey: path as NSString) {
+        if let obj = ImageCache.sharedInstance.image(forKey: path) {
             self.image = obj
             return
         }
@@ -21,7 +21,7 @@ class MovieImageView : UIImageView {
         let dataTask = URLSession.shared.dataTask(with: posterRequest) { (data, response, error) in
             DispatchQueue.main.async {
                 if let data = data, let imageToCache = UIImage(data: data) {
-                    ImageCache.sharedInstance.add(image: imageToCache, key: path as NSString)
+                    ImageCache.sharedInstance.add(image: imageToCache, key: path)
                     self.image = imageToCache
                 }
             }

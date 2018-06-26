@@ -10,12 +10,15 @@ import Foundation
 class MoviesViewModel {
     
     private let remoteListRepository: RemoteListRepository<MovieInfo>
+    private let appNavigator: AppNavigator
     
     var didLoadMovies: (([MoviesListContent]) -> Void)?
     var didFail: ((Error) -> Void)?
+    var didStartLoading: ((Bool) -> Void)?
     
-    init(listRepository: RemoteListRepository<MovieInfo>) {
-        remoteListRepository = listRepository
+    init(appNavigator: AppNavigator, listRepository: RemoteListRepository<MovieInfo>) {
+        self.remoteListRepository = listRepository
+        self.appNavigator = appNavigator
     }
     
     func loadMovies() {
@@ -24,20 +27,22 @@ class MoviesViewModel {
         var inTheatreResult: Result<MovieInfo>?
         var highestRatedMoviesResult: Result<MovieInfo>?
         
+        didStartLoading?(true)
+        
         dispatchGroup.enter()
-        self.popularityRequest(request: InTheatreRequest()) { (result) in
+        self.listRequest(request: InTheatreRequest()) { (result) in
             popularMoviesResult = result
             dispatchGroup.leave()
         }
         
         dispatchGroup.enter()
-        self.popularityRequest(request: PopularityRequest()) { (result) in
+        self.listRequest(request: PopularityRequest()) { (result) in
             inTheatreResult = result
             dispatchGroup.leave()
         }
         
         dispatchGroup.enter()
-        self.popularityRequest(request: HighestRatedMoviesRequest()) { (result) in
+        self.listRequest(request: HighestRatedMoviesRequest()) { (result) in
             highestRatedMoviesResult = result
             dispatchGroup.leave()
         }
@@ -46,6 +51,8 @@ class MoviesViewModel {
             let combined =  Result<[MovieInfo]>.combine(r1: popularMoviesResult!, r2: inTheatreResult!, r3: highestRatedMoviesResult!, selector: { (info1, info2, info3) in
                 return [info1, info2, info3]
             })
+            
+            self.didStartLoading?(false)
             
             switch combined {
             case .failure(let error):
@@ -60,9 +67,13 @@ class MoviesViewModel {
         }
     }
     
-    private func popularityRequest(request: RequestConvertible,completion: @escaping ((Result<MovieInfo>) -> Void)) {
-        remoteListRepository.getAll(request: request.request()) { (result) in
+    private func listRequest(request: RequestConvertible, completion: @escaping ((Result<MovieInfo>) -> Void)) {
+        remoteListRepository.getAll(request: request) { (result) in
             completion(result)
         }
+    }
+    
+    func showMovieDetails(movie: Movie) {
+        appNavigator.navigate(to: .movieDetails(movie: movie))
     }
 }

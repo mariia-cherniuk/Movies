@@ -8,6 +8,10 @@
 import Foundation
 
 protocol RequestConvertible {
+    var scheme: String { get }
+    var host: String { get }
+    var path: String { get }
+    
     func request() -> URLRequest
 }
 
@@ -21,6 +25,7 @@ extension RequestConvertible {
     var path: String {
         return "/3/discover/movie"
     }
+    
     var components: URLComponents {
         var urlComponents = URLComponents()
         
@@ -74,9 +79,48 @@ struct HighestRatedMoviesRequest: RequestConvertible {
 
 struct PosterRequest {
     func request(posterPath: String) -> URLRequest {
-        let stringURL = "https://image.tmdb.org/t/p/w500\(posterPath)"
+        let stringURL = "https://image.tmdb.org/t/p/w780\(posterPath)"
         let url = URL(string: stringURL)
         
         return URLRequest(url: url!)
+    }
+}
+
+struct SimilarMoviesRequest: RequestConvertible {
+    private let movieID: Int
+    
+    var path: String {
+        return "/3/movie/\(movieID)/recommendations"
+    }
+    
+    init(movieID: Int) {
+        self.movieID = movieID
+    }
+    
+    func request() -> URLRequest {
+        var components = self.components
+
+        components.queryItems?.append(URLQueryItem(name: "language", value: "en-US"))
+        components.queryItems?.append(URLQueryItem(name: "page", value: "1"))
+        
+        let url = components.url!
+        
+        return URLRequest(url: url)
+    }
+}
+
+struct MovieImagesRequest: RequestConvertible {
+    private let movieID: Int
+    
+    var path: String {
+        return "/3/movie/\(movieID)/images"
+    }
+    
+    init(movieID: Int) {
+        self.movieID = movieID
+    }
+    
+    func request() -> URLRequest {
+        return URLRequest(url: self.components.url!)
     }
 }

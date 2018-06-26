@@ -7,12 +7,14 @@
 
 import UIKit
 
-class MoviesCollectionViewDelegate<T>: NSObject, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+class ArrayCollectionViewAdapter<T>: NSObject, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
     private var items: [T] = []
     
     var cellForItem: ((UICollectionView, IndexPath, T) -> UICollectionViewCell)?
+    var minimumLineSpacingForSection: (() -> CGFloat)?
     var sizeForItemAt: (() -> CGSize)?
+    var didSelectItem: ((T) -> ())?
     
     func update(items: [T]) {
         self.items = items
@@ -33,11 +35,15 @@ class MoviesCollectionViewDelegate<T>: NSObject, UICollectionViewDataSource, UIC
     
     //MARK: UICollectionViewDelegate
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
+        didSelectItem?(items[indexPath.row])
     }
     
     //MARK: UICollectionViewDelegateFlowLayout
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return sizeForItemAt?() ?? CGSize(width: 0, height: 0)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return minimumLineSpacingForSection?() ?? 10
     }
 }

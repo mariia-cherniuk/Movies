@@ -1,5 +1,5 @@
 //
-//  MoviesListViewController.swift
+//  MovieDetailsViewController.swift
 //  MADMovie
 //
 //  Copyright © 2018 marydort. All rights reserved.
@@ -7,33 +7,30 @@
 
 import UIKit
 
-class MoviesListViewController: UIViewController {
-
-    private let movieListView = MoviesListView(frame: .zero)
-    private let moviesViewModel: MoviesViewModel
+class MovieDetailsViewController: UIViewController {
     
-    init(moviesViewModel: MoviesViewModel) {
-        self.moviesViewModel = moviesViewModel
+    private let movieDetailsView = MovieDetailsView(frame: .zero)
+    private let movieDetailsViewModel: MovieDetailsViewModel
+
+    init(movieDetailsViewModel: MovieDetailsViewModel) {
+        self.movieDetailsViewModel = movieDetailsViewModel
         
         super.init(nibName: nil, bundle: nil)
     }
-
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     //MARK: Life Cycle
     override func loadView() {
-        self.view = movieListView
-        
-        movieListView.didSelectItem = { item in
-            self.moviesViewModel.showMovieDetails(movie: item)
-        }
+        self.view = movieDetailsView
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.configureMovieDetailsView()
         self.loadData()
     }
     
@@ -43,23 +40,25 @@ class MoviesListViewController: UIViewController {
 }
 
 //MARK: Helpers
-extension MoviesListViewController {
+extension MovieDetailsViewController {
+    private func configureMovieDetailsView() {
+        movieDetailsView.configureViews(movie: movieDetailsViewModel.movie)
+        movieDetailsView.didSelectItem = movieDetailsViewModel.showMovieDetails
+    }
+    
     private func loadData() {
-        moviesViewModel.didStartLoading = movieListView.startLoading
-        moviesViewModel.didLoadMovies = movieListView.render
-        moviesViewModel.didFail = { [weak self] error in
+        movieDetailsViewModel.didStartLoading = movieDetailsView.startLoading
+        movieDetailsViewModel.didLoadMovies = movieDetailsView.render(results:)
+        movieDetailsViewModel.didFail = { [weak self] error in
             self?.showAlert(error: error)
         }
         
-        moviesViewModel.loadMovies()
+        movieDetailsViewModel.loadSimilarMovies()
     }
     
     private func showAlert(error: Error) {
         let alertController = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
         
-        alertController.addAction(UIAlertAction(title: "Retry", style: .default, handler: { [weak self] (action) in
-            self?.moviesViewModel.loadMovies()
-        }))
         alertController.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
         
         self.present(alertController, animated: true, completion: nil)
