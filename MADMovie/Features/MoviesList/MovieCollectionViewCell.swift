@@ -18,6 +18,8 @@ class MovieCollectionViewCell: UICollectionViewCell, MovieCollectionViewCellProt
     override init(frame: CGRect) {
         super.init(frame: frame)
         
+        self.clipsToBounds = true
+        
         self.addSubviews()
     }
     
@@ -26,6 +28,7 @@ class MovieCollectionViewCell: UICollectionViewCell, MovieCollectionViewCellProt
     }
     
     private func addSubviews() {
+        posterImageView.contentMode = .scaleAspectFill
         posterImageView.translatesAutoresizingMaskIntoConstraints = false
         
         self.addSubview(posterImageView)

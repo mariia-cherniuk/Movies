@@ -13,7 +13,7 @@ class ArrayCollectionViewAdapter<T>: NSObject, UICollectionViewDataSource, UICol
     
     var cellForItem: ((UICollectionView, IndexPath, T) -> UICollectionViewCell)?
     var minimumLineSpacingForSection: (() -> CGFloat)?
-    var sizeForItemAt: (() -> CGSize)?
+    var sizeForItemAt: ((T) -> CGSize)?
     var didSelectItem: ((T) -> ())?
     
     func update(items: [T]) {
@@ -40,7 +40,7 @@ class ArrayCollectionViewAdapter<T>: NSObject, UICollectionViewDataSource, UICol
     
     //MARK: UICollectionViewDelegateFlowLayout
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return sizeForItemAt?() ?? CGSize(width: 0, height: 0)
+        return sizeForItemAt?(items[indexPath.row]) ?? CGSize(width: 0, height: 0)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {

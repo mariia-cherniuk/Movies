@@ -9,14 +9,14 @@ import UIKit
 
 protocol MovieDetailsViewProtocol {
     func configureViews(movie: Movie)
-    func render(results: (MoviesListContent, MovieImage))
+    func render(results: (MoviesListContent, MovieImageInfo))
 }
 
 class MovieDetailsView: UIView {
     
     private let scrollView = UIScrollView()
     private let mainStackView = UIStackView()
-    private let movieDetailsImageView = MovieDetailsImageView()
+    let movieDetailsImageView = MovieDetailsImageView()
     private let titleLabel = UILabel()
     private let dateLabel = UILabel()
     private let ratingLabel = UILabel()
@@ -138,14 +138,16 @@ extension MovieDetailsView: MovieDetailsViewProtocol {
     }
     
     //MARK: MoviesListViewProtocol
-    func render(results: (MoviesListContent, MovieImage)) {
+    func render(results: (MoviesListContent, MovieImageInfo)) {
         if results.0.information.results.count == 0 {
             similarMoviesStackView.removeFromSuperview()
-            return
+        } else {
+            similarMoviesStackView.update(content: results.0)
         }
 
-        similarMoviesStackView.update(content: results.0)
-        movieDetailsImageView.render(results: results.1)
+        if results.1.posters.count != 0 || results.1.backdrops.count != 0 {
+            movieDetailsImageView.render(results: results.1)
+        }
     }
     
     func startLoading(loading: Bool) {

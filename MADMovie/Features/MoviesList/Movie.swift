@@ -29,10 +29,14 @@ struct Movie: Decodable {
     let voteAverage: Double
 }
 
-struct MovieImage: Decodable {
-    let backdrops: [MovieBackdrop]
+struct MovieImageInfo: Decodable {
+    let backdrops: [MovieImage]
+    let posters: [MovieImage]
 }
 
-struct MovieBackdrop: Decodable {
+struct MovieImage: Decodable {
     let filePath: String
+    let width: Int
+    let height: Int
+    let aspectRatio: Double
 }

@@ -9,15 +9,16 @@ import Foundation
 
 class MovieDetailsViewModel {
     private let remoteListRepository: RemoteListRepository<MovieInfo>
-    private let imagesRemoteListRepository: RemoteListRepository<MovieImage>
+    private let imagesRemoteListRepository: RemoteListRepository<MovieImageInfo>
     private let appNavigator: AppNavigator
+    private var movieImage: MovieImageInfo?
     let movie: Movie
     
-    var didLoadMovies: (((MoviesListContent, MovieImage)) -> Void)?
+    var didLoadMovies: (((MoviesListContent, MovieImageInfo)) -> Void)?
     var didFail: ((Error) -> Void)?
     var didStartLoading: ((Bool) -> Void)?
     
-    init(appNavigator: AppNavigator, listRepository: RemoteListRepository<MovieInfo>, imagesRemoteListRepository: RemoteListRepository<MovieImage>, movie: Movie) {
+    init(appNavigator: AppNavigator, listRepository: RemoteListRepository<MovieInfo>, imagesRemoteListRepository: RemoteListRepository<MovieImageInfo>, movie: Movie) {
         self.imagesRemoteListRepository = imagesRemoteListRepository
         self.remoteListRepository = listRepository
         self.appNavigator = appNavigator
@@ -27,7 +28,7 @@ class MovieDetailsViewModel {
     func loadSimilarMovies() {
         let dispatchGroup = DispatchGroup()
         var similarMoviesResult: Result<MovieInfo>?
-        var movieImagesResult: Result<MovieImage>?
+        var movieImagesResult: Result<MovieImageInfo>?
         
         didStartLoading?(true)
         
@@ -44,7 +45,7 @@ class MovieDetailsViewModel {
         }
         
         dispatchGroup.notify(queue: .main) {
-            let combined = Result<(MovieInfo, MovieImage)>.combine(r1: similarMoviesResult!, r2: movieImagesResult!, selector: { (info1, info2) in
+            let combined = Result<(MovieInfo, MovieImageInfo)>.combine(r1: similarMoviesResult!, r2: movieImagesResult!, selector: { (info1, info2) in
                 return (info1, info2)
             })
 
@@ -55,14 +56,23 @@ class MovieDetailsViewModel {
                 self.didFail?(error)
             case .success(let result):
                 let similarMovies = MoviesListContent(title: "MORE LIKE THIS", information: result.0)
-                let movieImages = result.1
+                self.movieImage = result.1
              
-                self.didLoadMovies?((similarMovies, movieImages))
+                self.didLoadMovies?((similarMovies, self.movieImage!))
             }
         }
     }
 
     func showMovieDetails(movie: Movie) {
         appNavigator.navigate(to: .movieDetails(movie: movie))
+    }
+    
+    func showMovieImages() {
+        guard let unwrappedMovieImage = movieImage else { return }
+        var images = unwrappedMovieImage.backdrops + unwrappedMovieImage.posters
+        
+        images.shuffle()
+        
+        appNavigator.navigate(to: .moviesImages(images: images))
     }
 }

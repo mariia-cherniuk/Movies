@@ -49,6 +49,8 @@ extension MovieDetailsViewController {
     private func loadData() {
         movieDetailsViewModel.didStartLoading = movieDetailsView.startLoading
         movieDetailsViewModel.didLoadMovies = movieDetailsView.render(results:)
+        
+        movieDetailsView.movieDetailsImageView.didTapAllImagesButton = movieDetailsViewModel.showMovieImages
         movieDetailsViewModel.didFail = { [weak self] error in
             self?.showAlert(error: error)
         }

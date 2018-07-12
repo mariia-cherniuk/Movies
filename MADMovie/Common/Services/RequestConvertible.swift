@@ -121,6 +121,6 @@ struct MovieImagesRequest: RequestConvertible {
     }
     
     func request() -> URLRequest {
-        return URLRequest(url: self.components.url!)
+        return URLRequest(url: components.url!)
     }
 }

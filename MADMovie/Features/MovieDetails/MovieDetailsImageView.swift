@@ -11,9 +11,12 @@ final class MovieDetailsImageView: UIView {
     
     private let layout = UICollectionViewFlowLayout()
     private lazy var backdropsCollectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
-    private let collectionViewDelegate = ArrayCollectionViewAdapter<MovieBackdrop>()
+    private let collectionViewDelegate = ArrayCollectionViewAdapter<MovieImage>()
     private let posterImageView = MovieImageView()
+    private let allImagesButton = UIButton()
 
+    var didTapAllImagesButton: (() -> ())?
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -32,6 +35,7 @@ extension MovieDetailsImageView {
         
         self.configureCollectionViewDelegate()
         self.configureBackdropsCollectionView()
+        self.configureAllImagesButton()
         self.configurePosterImageView()
     }
     
@@ -39,7 +43,7 @@ extension MovieDetailsImageView {
         collectionViewDelegate.cellForItem = { collectionView, indexPath, movieBackdrop in
             return self.movieCollectionViewCell(collectionView: collectionView, indexPath: indexPath, movieBackdrop: movieBackdrop)
         }
-        collectionViewDelegate.sizeForItemAt = {
+        collectionViewDelegate.sizeForItemAt = { item in
             return CGSize(width: self.bounds.width, height: 230)
         }
         collectionViewDelegate.minimumLineSpacingForSection = {
@@ -64,6 +68,19 @@ extension MovieDetailsImageView {
         backdropsCollectionView.heightAnchor.constraint(equalToConstant: 230).isActive = true
     }
     
+    private func configureAllImagesButton() {
+        allImagesButton.isEnabled = false
+        allImagesButton.translatesAutoresizingMaskIntoConstraints = false
+        allImagesButton.addTarget(self, action: #selector(allImagesButtonPressed), for: .touchUpInside)
+        
+        self.addSubview(allImagesButton)
+        
+        allImagesButton.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
+        allImagesButton.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
+        allImagesButton.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        allImagesButton.heightAnchor.constraint(equalToConstant: 100).isActive = true
+    }
+    
     private func configurePosterImageView() {
         posterImageView.contentMode = .scaleAspectFit
         posterImageView.image = UIImage(named: "default_poster_icon")
@@ -80,7 +97,7 @@ extension MovieDetailsImageView {
 
 //MARK: Helpers
 extension MovieDetailsImageView {
-    private func movieCollectionViewCell(collectionView: UICollectionView, indexPath: IndexPath, movieBackdrop: MovieBackdrop) -> UICollectionViewCell {
+    private func movieCollectionViewCell(collectionView: UICollectionView, indexPath: IndexPath, movieBackdrop: MovieImage) -> UICollectionViewCell {
         let cell: MovieCollectionViewCell = collectionView.dequeueReusableCell(indexPath: indexPath)
         
         cell.loadImage(posterPath: movieBackdrop.filePath)
@@ -94,8 +111,15 @@ extension MovieDetailsImageView {
         }
     }
     
-    func render(results: MovieImage) {
+    func render(results: MovieImageInfo) {
+        allImagesButton.setTitle("SHOW ALL", for: .normal)
+        allImagesButton.isEnabled = true
+        
         collectionViewDelegate.update(items: results.backdrops)
         backdropsCollectionView.reloadData()
+    }
+    
+    @objc private func allImagesButtonPressed() {
+        didTapAllImagesButton?()
     }
 }

@@ -46,7 +46,7 @@ extension MoviesStackView {
         collectionViewDelegate.cellForItem = { collectionView, indexPath, item in
             return self.movieCollectionViewCell(collectionView: collectionView, indexPath: indexPath, movie: item)
         }
-        collectionViewDelegate.sizeForItemAt = {
+        collectionViewDelegate.sizeForItemAt = { item in
             return CGSize(width: 130, height: 220)
         }
         collectionViewDelegate.didSelectItem = { item in
