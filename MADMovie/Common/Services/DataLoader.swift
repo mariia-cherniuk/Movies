@@ -46,10 +46,29 @@ enum Result<T> {
             return Result<V>.failure(error)
         }
     }
+    
+    var value: T? {
+        switch self {
+        case .success(let value):
+            return value
+        default:
+            return nil
+        }
+    }
+    
+    var error: Error? {
+        switch self {
+        case .failure(let error):
+            return error
+        default:
+            return nil
+        }
+    }
 }
 
 protocol DataLoaderProtocol {
-    func loadData(urlRequest: URLRequest, completion: @escaping (Result<Data>) -> Void)
+    @discardableResult
+    func loadData(urlRequest: RequestConvertible, completion: @escaping (Result<Data>) -> Void) -> Cancelable
 }
 
 class DataLoader : DataLoaderProtocol {
@@ -59,8 +78,9 @@ class DataLoader : DataLoaderProtocol {
         self.urlSession = urlSession
     }
     
-    func loadData(urlRequest: URLRequest, completion: @escaping (Result<Data>) -> Void) {
-        let dataTask = urlSession.dataTask(with: urlRequest) { (data, response, error) in
+    @discardableResult
+    func loadData(urlRequest: RequestConvertible, completion: @escaping (Result<Data>) -> Void) -> Cancelable {
+        let dataTask = urlSession.dataTask(with: urlRequest.request()) { (data, response, error) in
             if let error = error {
                 completion(Result.failure(error))
             } else if let data = data {
@@ -71,5 +91,13 @@ class DataLoader : DataLoaderProtocol {
         }
         
         dataTask.resume()
+        
+        return dataTask
     }
 }
+
+protocol Cancelable {
+    func cancel()
+}
+
+extension URLSessionTask: Cancelable { }

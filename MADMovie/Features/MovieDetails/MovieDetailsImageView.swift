@@ -8,11 +8,12 @@
 import UIKit
 
 final class MovieDetailsImageView: UIView {
-    
+    // TODO: Move from view
+    private let imageSevice = MovieImageService(cache: ImageCache(), loader: DataLoader(urlSession: URLSession.shared))
     private let layout = UICollectionViewFlowLayout()
     private lazy var backdropsCollectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
     private let collectionViewDelegate = ArrayCollectionViewAdapter<MovieImage>()
-    private let posterImageView = MovieImageView()
+    private let posterImageView = UIImageView()
     private let allImagesButton = UIButton()
 
     var didTapAllImagesButton: (() -> ())?
@@ -100,14 +101,14 @@ extension MovieDetailsImageView {
     private func movieCollectionViewCell(collectionView: UICollectionView, indexPath: IndexPath, movieBackdrop: MovieImage) -> UICollectionViewCell {
         let cell: MovieCollectionViewCell = collectionView.dequeueReusableCell(indexPath: indexPath)
         
-        cell.loadImage(posterPath: movieBackdrop.filePath)
+        cell.loadImage(posterPath: movieBackdrop.filePath, service: imageSevice)
         
         return cell
     }
     
-    func configureImageViews(posterPath: String?) {
-        if let posterPath = posterPath {
-            posterImageView.downloadImageFrom(path: posterPath)
+    func configureImageViews(posterPath: String) {
+        imageSevice.loadPoster(with: posterPath) { [weak self] (image) in
+            self?.posterImageView.image = image
         }
     }
     

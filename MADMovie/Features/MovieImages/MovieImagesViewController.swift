@@ -12,11 +12,13 @@ protocol LayoutAdapter: AnyObject {
 }
 
 class MovieImagesViewController: UIViewController {
-    private var movieImagesView: MovieImagesView?
+    private let service: MovieImageService
+    private lazy var movieImagesView = MovieImagesView(frame: .zero, layoutDelegate: self, imageService: service)
     private let images: [MovieImage]
     
-    init(images: [MovieImage]) {
+    init(images: [MovieImage], service: MovieImageService) {
         self.images = images
+        self.service = service
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -26,12 +28,13 @@ class MovieImagesViewController: UIViewController {
     }
     
     //MARK: Life Cycle
+    override func loadView() {
+        self.view = movieImagesView
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        movieImagesView = MovieImagesView(frame: .zero, layoutDelegate: self)
-        
-        self.view = movieImagesView
         self.configureMovieImagesView()
     }
     
@@ -43,7 +46,7 @@ class MovieImagesViewController: UIViewController {
 //MARK: Helpers
 extension MovieImagesViewController {
     private func configureMovieImagesView() {
-        movieImagesView?.updateCollection(results: images)
+        movieImagesView.updateCollection(results: images)
     }
 }
 

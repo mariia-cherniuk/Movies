@@ -21,7 +21,7 @@ final class RemoteListRepository<T: Decodable>: ListRepository {
     }
     
     func getAll(request: RequestConvertible, completion: @escaping (Result<T>) -> Void) {
-        dataLoader.loadData(urlRequest: request.request()) { (result) in
+        dataLoader.loadData(urlRequest: request) { (result) in
             switch result {
             case .failure(let error):
                 completion(Result.failure(error))

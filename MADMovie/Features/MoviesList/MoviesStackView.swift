@@ -8,6 +8,8 @@
 import UIKit
 
 class MoviesStackView: UIView {
+    // TODO: Move from view
+    private let imageSevice = MovieImageService(cache: ImageCache(), loader: DataLoader(urlSession: URLSession.shared))
     private let layout = UICollectionViewFlowLayout()
     private lazy var moviesCollectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
     private let mainStackView = UIStackView()
@@ -86,7 +88,7 @@ extension MoviesStackView {
         let cell: MovieCollectionViewCell = collectionView.dequeueReusableCell(indexPath: indexPath)
         
         if let posterPath = movie.posterPath {
-            cell.loadImage(posterPath: posterPath)
+            cell.loadImage(posterPath: posterPath, service: imageSevice)
         }
         
         return cell

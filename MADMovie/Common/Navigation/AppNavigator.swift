@@ -67,7 +67,8 @@ extension AppNavigator {
     }
     
     private func moviesMovieImagesViewController(images: [MovieImage]) -> UIViewController {
-        let viewController = MovieImagesViewController(images: images)
+        let service = MovieImageService(cache: ImageCache(), loader: dataLoader)
+        let viewController = MovieImagesViewController(images: images, service: service)
         
         return viewController
     }

@@ -36,6 +36,12 @@ extension RequestConvertible {
         
         return urlComponents
     }
+    
+    func request() -> URLRequest {
+        let url = components.url!
+        
+        return URLRequest(url: url)
+    }
 }
 
 struct PopularityRequest: RequestConvertible {
@@ -77,12 +83,19 @@ struct HighestRatedMoviesRequest: RequestConvertible {
     }
 }
 
-struct PosterRequest {
-    func request(posterPath: String) -> URLRequest {
-        let stringURL = "https://image.tmdb.org/t/p/w780\(posterPath)"
-        let url = URL(string: stringURL)
-        
-        return URLRequest(url: url!)
+struct PosterRequest: RequestConvertible {
+    private let posterPath: String
+    
+    var host: String {
+        return "image.tmdb.org"
+    }
+    
+    var path: String {
+        return "/t/p/w780/\(posterPath)"
+    }
+    
+    init(posterPath: String) {
+        self.posterPath = posterPath
     }
 }
 

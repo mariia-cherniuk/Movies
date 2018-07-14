@@ -129,12 +129,14 @@ extension MovieDetailsView {
 extension MovieDetailsView: MovieDetailsViewProtocol {
     
     func configureViews(movie: Movie) {
-        movieDetailsImageView.configureImageViews(posterPath: movie.posterPath)
-        
         ratingLabel.text = "Votes average: \(movie.voteAverage)"
         dateLabel.text = "Release date: \(movie.releaseDate)"
         titleLabel.text = movie.title.uppercased()
         infoLabel.text = movie.overview
+        
+        if let path = movie.posterPath {
+            movieDetailsImageView.configureImageViews(posterPath: path)
+        }
     }
     
     //MARK: MoviesListViewProtocol

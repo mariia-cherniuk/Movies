@@ -13,8 +13,6 @@ protocol ImageCacheProtocol {
 }
 
 class ImageCache: ImageCacheProtocol {
-    static let sharedInstance = ImageCache()
-    
     private let imageCache = NSCache<NSString, UIImage>()
     
     //MARK: ImageCacheProtocol

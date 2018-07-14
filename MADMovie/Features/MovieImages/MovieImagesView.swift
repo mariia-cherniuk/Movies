@@ -8,14 +8,15 @@
 import UIKit
 
 class MovieImagesView: UIView {
+    private let imageService: MovieImageService
     private let imagesCollectionView: UICollectionView
     private let collectionViewDelegate = ArrayCollectionViewAdapter<MovieImage>()
     
-    init(frame: CGRect, layoutDelegate: LayoutAdapter) {
+    init(frame: CGRect, layoutDelegate: LayoutAdapter, imageService: MovieImageService) {
         let layout = MosaicLayout(layoutDelegate: layoutDelegate, numberOfColumns: 2, spacing: 5)
         
         self.imagesCollectionView = UICollectionView(frame: frame, collectionViewLayout: layout)
-        
+        self.imageService = imageService
         super.init(frame: frame)
         self.configureSubviews()
     }
@@ -58,7 +59,7 @@ extension MovieImagesView {
     private func movieCollectionViewCell(collectionView: UICollectionView, indexPath: IndexPath, movieBackdrop: MovieImage) -> UICollectionViewCell {
         let cell: MovieCollectionViewCell = collectionView.dequeueReusableCell(indexPath: indexPath)
         
-        cell.loadImage(posterPath: movieBackdrop.filePath)
+        cell.loadImage(posterPath: movieBackdrop.filePath, service: imageService)
         
         return cell
     }

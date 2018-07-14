@@ -7,13 +7,9 @@
 
 import UIKit
 
-protocol MovieCollectionViewCellProtocol {
-    func loadImage(posterPath: String)
-}
-
-class MovieCollectionViewCell: UICollectionViewCell, MovieCollectionViewCellProtocol {
+class MovieCollectionViewCell: UICollectionViewCell {
     
-    private let posterImageView = MovieImageView()
+    private let posterImageView = UIImageView()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -25,6 +21,12 @@ class MovieCollectionViewCell: UICollectionViewCell, MovieCollectionViewCellProt
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        posterImageView.image = nil
+        // TODO: Cancel image loading
     }
     
     private func addSubviews() {
@@ -43,7 +45,9 @@ class MovieCollectionViewCell: UICollectionViewCell, MovieCollectionViewCellProt
     }
     
     //MARK: MovieCollectionViewCellProtocol
-    func loadImage(posterPath: String) {
-        posterImageView.downloadImageFrom(path: posterPath)
+    func loadImage(posterPath: String, service: MovieImageService) {
+        service.loadPoster(with: posterPath) { (image) in
+            self.posterImageView.image = image
+        }
     }
 }
