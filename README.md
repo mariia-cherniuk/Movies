@@ -1,6 +1,6 @@
 ## Movies
 
-#### Uses https://www.themoviedb.org API  to show popular movies and its details
+#### Uses [www.themoviedb](https://www.themoviedb.org) API  to show popular movies and its details
 
 ## Development technologies:
 
