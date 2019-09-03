@@ -19,7 +19,7 @@ class MoviesListView: UIView {
     private let inTheatreStackView = MoviesStackView()
     private let popularMoviesStackView = MoviesStackView()
     private let highestRatedMoviesStackView = MoviesStackView()
-    private let activityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+    private let activityIndicatorView = UIActivityIndicatorView(style: .whiteLarge)
     
     var didSelectItem: ((Movie) -> ())?
     

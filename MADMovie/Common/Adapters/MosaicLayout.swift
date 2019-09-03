@@ -103,7 +103,7 @@ extension MosaicLayout {
     private func column(by yOrigins: [CGFloat]) -> Int {
         let minYOrigin = yOrigins.min()!
         
-        return yOrigins.index(of: minYOrigin)!
+        return yOrigins.firstIndex(of: minYOrigin)!
     }
     
     private func xOrigin(for column: Int) -> CGFloat {

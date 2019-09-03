@@ -22,7 +22,7 @@ class MovieDetailsView: UIView {
     private let ratingLabel = UILabel()
     private let infoLabel = UILabel()
     private let similarMoviesStackView = MoviesStackView()
-    private let activityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+    private let activityIndicatorView = UIActivityIndicatorView(style: .whiteLarge)
     
     var didSelectItem: ((Movie) -> ())? {
         get {
